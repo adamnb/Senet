@@ -3,12 +3,13 @@ package brown.adamn;
 import java.util.Random;
 
 public class Senet {
-    private int[] board;   // Stores position of player pieces
+    private final int[] board;   // Stores position of player pieces
+    private final char[] playerSymbol = new char[2]; // On-board representation of character pieces
+    private final int[] score         = new int[2];
+
     private int turn  = 0; // Current player's turn. 1: player 1 (server), 2: player 2 (client), 0: no player
     private int roll  = 1; // What the current roll amount is for the current turn
     private int moves = 0; // How many moves have been executed
-    private char[] playerSymbol = new char[2]; // On-board representation of character pieces
-    private  int[] score        = new int[2];
 
     /**
      * @param player1 The symbol representing player 1
@@ -22,14 +23,15 @@ public class Senet {
             player2 = 'B';
         }
 
+        playerSymbol[0] = player1;
+        playerSymbol[1] = player2;
+
+        // Keep number of rows within a reasonable range
         if (rows < 1)
             rows = 3;
         if (rows > 10)
             rows = 10;
         board = new int[10*rows];
-
-        playerSymbol[0] = player1;
-        playerSymbol[1] = player2;
 
         // Keep first player within range
         if (initiative > 2)
@@ -39,7 +41,7 @@ public class Senet {
         else
             turn = initiative;
 
-        // Populate board
+        // Populate board (Alternate players for first 10 spaces)
         for (int i = 0; i < 10; i++) {
             if (i%2 == 0) {
                 board[i] = oppTurn();
@@ -48,8 +50,8 @@ public class Senet {
             }
         }
     }
-    public Senet (char player1, char player2, int initiative){ this (player1, player2, initiative, 3); }
-    public Senet (char player1, char player2) { this ('A', 'B', 1, 3); }
+    public Senet (char player1, char player2, int initiative) { this (player1, player2, initiative, 3); }
+    public Senet (char player1, char player2) { this (player1, player2, 1, 3); }
     public Senet (int rows) { this('A', 'B', 1, rows); }
     public Senet () { this ('A', 'B', 1, 3);}
 
@@ -58,6 +60,7 @@ public class Senet {
      * @return The board represented in text
      */
     // TODO: Use StringBuilder for concatenation
+    // TODO: Move to a game-managing class
     public String drawBoard(boolean print) {
         String ret = "";
 
@@ -89,30 +92,26 @@ public class Senet {
     }
     public String drawBoard () { return drawBoard(true); }
 
+    /**
+     * @param pos The position of the target piece to be moved. This is the array index, so it ranges from 0 to board.length-1.
+     * @return The error code of the move. 0=valid, -n=player n scored, 1=No piece at position, 2=not your piece, 3=friendly fire, 4=guarded opponent
+     */
     public int move (int pos) {
         // Determining move distance and handling extra turns
-        boolean extraTurn = false;
-        int spaces = roll;
-        if (roll == 0) { // No white sides up
-            spaces = 6;
-            extraTurn = true;
-        } else if (roll == 4 || roll == 1) {
-            extraTurn = true;
-        }
+        int spaces = rollSpaces();
 
-        final int destPos = pos+spaces;
-        final int dest = board[destPos]; // The boardpiece where the selected piece is going
+        final int destPos = pos+spaces; // Board index of destination slot
+        final Integer dest = destPos < board.length-1 ? board[destPos] : null; // The boardpiece where the selected piece is going
 
         // Invalid Moves
-        if (board[pos] == 0)
-            return 1; // Illegal move: There is no piece at this position
+        if ((pos > board.length-1 || pos < 0) || board[pos] == 0)
+            return 1; // Illegal move: There is no piece at this position or out of bounds
         if (board[pos] != turn)
             return 2; // Illegal move: Attempt to move opponent piece
         if (dest == turn)
             return 3; // Illegal move: Attempt to attack friendly piece
         if (dest == oppTurn() && isGuarded(destPos))
             return 4; // Illegal move: This piece is guarded
-
 
         if (pos+spaces >= board.length) {
             moves++;
@@ -132,7 +131,7 @@ public class Senet {
             board[pos] = 0;
         }
 
-        if (!extraTurn) {
+        if (!hasExtraTurn()) {
             nextTurn();
         }
 
@@ -160,9 +159,23 @@ public class Senet {
     }
 
     /**
+     * @return The number of spaces the player must move given the current roll value.
+     */
+    public int rollSpaces () {
+        if (roll == 0) // No white sides up
+            return 6;
+        return roll;
+    }
+
+    /**
+     * @return If the player has an extra turn given the current roll.
+     */
+    public boolean hasExtraTurn () { return roll == 0 || roll == 1 || roll == 4; }
+
+    /**
      * @return The current opponents turn number. 1 for player 1. 2 for player 2.
      */
-    int oppTurn () {
+    public int oppTurn () {
         if (turn == 0)
             return 0;
         if (turn == 1)
@@ -171,7 +184,11 @@ public class Senet {
             return 1;
     }
 
-    boolean isGuarded (int pos) {
+    /**
+     * @param pos The index of the piece to be guarded
+     * @return Whether the piece at index "pos" is guarded. A piece is guarded when there is another friendly piece in an adjacent spot
+     */
+    public boolean isGuarded (int pos) {
         // Out of bounds protection
         if (pos < 0)
             pos = 0;
@@ -179,25 +196,18 @@ public class Senet {
             pos = board.length-1;
 
         int team = board[pos];
-        if (pos > 0 && board[pos-1] == team)
-            return true;
-        if (pos < board.length-1 && board[pos+1] == team)
-            return true;
-
-        return false;
+        //      vv        Check behind       vv      vv              Check in front                vv
+        return (pos > 0 && board[pos-1] == team) || (pos < board.length - 1 && board[pos + 1] == team);
     }
 
     /**
      * This method switches the turn number to the opposite player
-     * @return The turn number after being switched
      */
-    // Progress to next turn
-    public int nextTurn() {
-        turn = oppTurn();
-        return turn;
+    public void nextTurn () {
+        turn = oppTurn();;
     }
 
-    // Set-Get methods
+    // General Set-Get methods
     public int getTurn() { return turn; }
 
     public int[] getBoard() { return board; }
@@ -207,5 +217,7 @@ public class Senet {
     public int getMoves () { return moves; }
 
     public int[] getScore () { return score; }
+
+    public int getRoll () { return roll; }
 
 }
