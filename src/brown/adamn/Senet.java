@@ -61,7 +61,7 @@ public class Senet {
      */
     // TODO: Use StringBuilder for concatenation
     // TODO: Move to a game-managing class
-    public String drawBoard(boolean print) {
+    public String drawBoard (boolean print) {
         String ret = "";
 
         for (int j = 0; j < board.length; j+=10) {
