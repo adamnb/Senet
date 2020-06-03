@@ -14,7 +14,6 @@ public class Main {
         boolean retry = false; // If the player attempts to preform an invalid move.
         int lastRoll = 1;
         while (game.getScore()[0] <= 5 || game.getScore()[1] <= 5) { // Breaks on win
-            System.out.println(retry);
             game.drawBoard();
 
             // Throw dice sticks
@@ -53,9 +52,27 @@ public class Main {
             if (moveError > 0) {
                 retry = true;
                 lastRoll = roll;
-            }
 
-            System.out.println(AnsiColors.err("Move resulted in "+moveError));
+                String errMsg = "";
+                switch (moveError) {
+                    case 1:
+                        errMsg = "There is no piece here.";
+                        break;
+                    case 2:
+                        errMsg = "That's not your piece.";
+                        break;
+                    case 3:
+                        errMsg = "You can't attack yourself.";
+                        break;
+                    case 4:
+                        errMsg = "You are attempting to attack a piece that is guarded.";
+                        break;
+                    default:
+                        errMsg = "Unexpected violation. "+moveError;
+                        break;
+                }
+                System.out.println(AnsiColors.err("Invalid move: " + errMsg) + "\nPlease try again.");
+            }
         }
         scanner.close();
     }
