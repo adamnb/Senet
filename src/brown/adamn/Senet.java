@@ -61,6 +61,7 @@ public class Senet {
      */
     // TODO: Use StringBuilder for concatenation
     // TODO: Move to a game-managing class
+    // TODO: Okay this just fucking sucks
     public String drawBoard (boolean print) {
         String ret = "";
 
@@ -101,7 +102,16 @@ public class Senet {
         int spaces = rollSpaces();
 
         final int destPos = pos+spaces; // Board index of destination slot
-        final Integer dest = destPos < board.length-1 ? board[destPos] : null; // The boardpiece where the selected piece is going
+
+        if (destPos >= board.length) {
+            moves++;
+            board[pos] = 0;
+            score[turn-1]++;
+            nextTurn();
+            return -oppTurn(); // Player has moved a piece off the board. Congrats!
+        }
+
+        final Integer dest = board[destPos]; // The boardpiece where the selected piece is going
 
         // Invalid Moves
         if ((pos > board.length-1 || pos < 0) || board[pos] == 0)
@@ -113,13 +123,6 @@ public class Senet {
         if (dest == oppTurn() && isGuarded(destPos))
             return 4; // Illegal move: This piece is guarded
 
-        if (pos+spaces >= board.length) {
-            moves++;
-            board[pos] = 0;
-            score[turn-1]++;
-            nextTurn();
-            return -oppTurn(); // Player has moved a piece off the board. Congrats!
-        }
 
         if (dest == oppTurn()) { // Swap places with opponent
             board[pos+spaces] = turn;
