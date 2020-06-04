@@ -56,44 +56,6 @@ public class Senet {
     public Senet () { this ('A', 'B', 1, 3);}
 
     /**
-     * @param print If set to true, prints the board directly into the console
-     * @return The board represented in text
-     */
-    // TODO: Use StringBuilder for concatenation
-    // TODO: Move to a game-managing class
-    // TODO: Okay this just fucking sucks
-    public String drawBoard (boolean print) {
-        String ret = "";
-
-        for (int j = 0; j < board.length; j+=10) {
-            // Display board pieces
-            if (j >= 10)
-                ret+="\n";
-
-            for (int i = j; i < j+10; i++) {
-                char resolvedSym = board[i] == 0 ? ' ' : playerSymbol[ board[i]-1]; // Shows a space if there is no gamepiece
-                ret += " " + resolvedSym + " ";
-            }
-            ret += "\n";
-            // Write numbers below
-            for (int i = 0; i < 10; i++) {
-                // Handle formatting for single & double digit numbers
-                String digit = "" + (j + i + 1);
-                if (j + i + 1 < 10)
-                    digit = (j + i + 1) + " ";
-                ret += " " + digit;
-            }
-            ret += "\n------------------------------"; // Row separator
-        }
-
-        if (print)
-            System.out.println(ret);
-
-        return ret;
-    }
-    public String drawBoard () { return drawBoard(true); }
-
-    /**
      * @param pos The position of the target piece to be moved. This is the array index, so it ranges from 0 to board.length-1.
      * @return The error code of the move. 0=valid, -n=player n scored, 1=No piece at position, 2=not your piece, 3=friendly fire, 4=guarded opponent
      */
@@ -103,6 +65,7 @@ public class Senet {
 
         final int destPos = pos+spaces; // Board index of destination slot
 
+        // Player scores points
         if (destPos >= board.length) {
             moves++;
             board[pos] = 0;
@@ -111,7 +74,7 @@ public class Senet {
             return -oppTurn(); // Player has moved a piece off the board. Congrats!
         }
 
-        final Integer dest = board[destPos]; // The boardpiece where the selected piece is going
+        final int dest = board[destPos]; // The boardpiece where the selected piece is going
 
         // Invalid Moves
         if ((pos > board.length-1 || pos < 0) || board[pos] == 0)
