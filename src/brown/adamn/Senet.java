@@ -88,7 +88,8 @@ public class Senet {
             return 4; // Illegal move: Attempt to attack friendly piece
         if (dest == oppTurn() && isGuarded(destPos))
             return 5; // Illegal move: This piece is guarded
-
+        if (moves == 0 && pos != 9)
+            return 6;
 
         if (dest == oppTurn()) { // Swap places with opponent
             board[pos+spaces] = turn;

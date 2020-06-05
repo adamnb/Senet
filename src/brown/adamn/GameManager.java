@@ -80,6 +80,9 @@ public class GameManager {
                     case 5:
                         errMsg = "You are attempting to attack a piece that is guarded.";
                         break;
+                    case 6:
+                        errMsg = "You must move the piece on #10 at the beginning of the game.";
+                        break;
                     default:
                         errMsg = "Unexpected violation. "+moveError;
                         break;
