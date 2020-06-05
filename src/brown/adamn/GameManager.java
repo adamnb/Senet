@@ -72,9 +72,12 @@ public class GameManager {
                         errMsg = "That's not your piece.";
                         break;
                     case 3:
-                        errMsg = "You can't attack yourself.";
+                        errMsg = "You can't move that piece there";
                         break;
                     case 4:
+                        errMsg = "You can't attack yourself.";
+                        break;
+                    case 5:
                         errMsg = "You are attempting to attack a piece that is guarded.";
                         break;
                     default:
@@ -92,7 +95,6 @@ public class GameManager {
      * @return The board represented in text
      */
     // TODO: Use StringBuilder for concatenation
-    // TODO: Move to a game-managing class
     // TODO: Okay this just fucking sucks
     public String drawBoard (boolean print) {
 

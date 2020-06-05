@@ -65,26 +65,29 @@ public class Senet {
 
         final int destPos = pos+spaces; // Board index of destination slot
 
-        // Player scores points
-        if (destPos >= board.length) {
+        // Invalid Moves
+        if ((pos > board.length-1 || pos < 0) || board[pos] == 0)
+            return 1; // Illegal move: There is no piece at this position or out of bounds
+        if (board[pos] != turn)
+            return 2; // Illegal move: Attempt to move opponent piece
+
+        if (destPos == board.length) {
+            System.out.println("Score!");
             moves++;
             board[pos] = 0;
             score[turn-1]++;
             nextTurn();
             return -oppTurn(); // Player has moved a piece off the board. Congrats!
         }
+        else if (destPos < 0 || destPos > board.length)
+            return 3; // Player cannot move there
 
         final int dest = board[destPos]; // The boardpiece where the selected piece is going
 
-        // Invalid Moves
-        if ((pos > board.length-1 || pos < 0) || board[pos] == 0)
-            return 1; // Illegal move: There is no piece at this position or out of bounds
-        if (board[pos] != turn)
-            return 2; // Illegal move: Attempt to move opponent piece
         if (dest == turn)
-            return 3; // Illegal move: Attempt to attack friendly piece
+            return 4; // Illegal move: Attempt to attack friendly piece
         if (dest == oppTurn() && isGuarded(destPos))
-            return 4; // Illegal move: This piece is guarded
+            return 5; // Illegal move: This piece is guarded
 
 
         if (dest == oppTurn()) { // Swap places with opponent
