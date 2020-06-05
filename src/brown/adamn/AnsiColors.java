@@ -1,5 +1,8 @@
 package brown.adamn;
 
+/**
+ * Includes several constants and methods used for ANSI text formatting. They serve no purpose but as a visual aid.
+ */
 public class AnsiColors {
     public static final String RST = "\u001B[0m";
 
