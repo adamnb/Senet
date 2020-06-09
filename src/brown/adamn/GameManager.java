@@ -39,7 +39,7 @@ public class GameManager {
             else System.out.println();
 
             // Obtain player input to move piece
-            System.out.print(AnsiColors.player("PLAYER "+game.getTurn()+" \""+game.getPlayerSymbol()[game.getTurn()-1]
+            System.out.print(AnsiColors.player("PLAYER "+game.getTurn()+" \""+game.getPlayerSymbols()[game.getTurn()-1]
                     +"\" MOVE: ", game.getTurn()));
 
             String movInp = scanner.next(); // nextInt() sucks
@@ -99,8 +99,7 @@ public class GameManager {
      * @param print If set to true, prints the board directly into the console
      * @return The board represented in text
      */
-    // TODO: Use StringBuilder for concatenation
-    // TODO: Okay this just fucking sucks
+    // TODO: Okay this just kinda sucks
     public String drawBoard (boolean print) {
 
         StringBuilder ret = new StringBuilder(9*game.getBoard().length);
@@ -111,9 +110,9 @@ public class GameManager {
                 ret.append("\n");
 
             for (int i = j; i < j+10; i++) {
-                char resolvedSym = game.getBoard()[i] == 0 ?
-                        ' ' : game.getPlayerSymbol()[ game.getBoard()[i]-1]; // Shows a space if there is no gamepiece
-                ret.append(" ").append(resolvedSym).append(" ");
+                ret.append(" ")
+                        .append(AnsiColors.player(Character.toString(game.getPlayerSymbol(i)), game.getBoard()[i]))
+                        .append(" ");
             }
             ret.append("\n");
             // Write numbers below

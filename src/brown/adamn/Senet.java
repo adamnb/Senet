@@ -61,6 +61,7 @@ public class Senet {
     public Senet (int rows) { this('A', 'B', 1, rows); }
     public Senet () { this ('A', 'B', 1, 3);}
 
+    // TODO: Add trap square
     /**
      * @param pos The position of the target piece to be moved. This is the array index, so it ranges from 0 to board.length-1.
      * @return The error code of the move. 0=valid, -n=player n scored, 1=No piece at position, 2=not your piece, 3=friendly fire, 4=guarded opponent
@@ -193,7 +194,13 @@ public class Senet {
 
     public int[] getBoard() { return board; }
 
-    public char[] getPlayerSymbol() { return playerSymbol; }
+    public char[] getPlayerSymbols() { return playerSymbol; }
+    public char   getPlayerSymbol(int pos) {
+        int piece = board[pos];
+        if (piece == 1 || piece == 2)
+            return playerSymbol[piece-1];
+        return ' ';
+    }
 
     public int getMoves () { return moves; }
 
