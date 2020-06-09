@@ -29,8 +29,6 @@ public class GameManager {
                 roll = game.toss();
             }
 
-            // TODO: Score display
-
             // Report roll
             System.out.print("\nPlayer " + game.getTurn() + " threw a " + roll +
                     ". A piece must move " + AnsiColors.format(AnsiColors.NUMBER,game.rollSpaces() + " spaces. "));
@@ -48,12 +46,19 @@ public class GameManager {
             try {
                 mov = Integer.parseInt(movInp)-1;
             } catch (NumberFormatException e) {
-                if (movInp.toLowerCase().equals("exit") || movInp.toLowerCase().equals("stop")) {
+                String lc = movInp.toLowerCase();
+                if (lc.equals("exit") || lc.equals("stop")) {
                     System.out.println("Stopping game...");
                     return;
+                } else if (lc.equals("score") || lc.equals("scores")) {
+                    System.out.println(displayScores());
+                } else if (lc.equals("skip") || lc.equals("pass")) {
+                    System.out.println("Turn skipped.");
+                    game.nextTurn();
+                    continue;
+                } else {
+                    System.out.println(AnsiColors.err("Try using a number"));
                 }
-
-                System.out.println(AnsiColors.err("Try using a number"));
                 retry = true;
                 lastRoll = roll;
                 continue;
@@ -133,7 +138,24 @@ public class GameManager {
     }
     public String drawBoard () { return drawBoard(true); }
 
+    public String displayScore (int player) {
+        StringBuilder ret = new StringBuilder(112);
+        int score = game.getScore()[player-1];
+        ret.append(AnsiColors.player("Player "+player, player)).append(" [")
+                .append(repeatStr(AnsiColors.format(AnsiColors.BG[player-1], "+"), score))
+                .append(repeatStr(" ",5-score)).append("] ").append(score).append("/5");
+        return ret.toString();
+    }
+    public String displayScores () { return displayScore(1)+"\n"+displayScore(2); }
+
     public void setGame (Senet game) { this.game = game; }
     public Senet getGame () { return game; }
+
+    String repeatStr (String str, int n) { // I need this because I don't want to link to java 11 :(
+        StringBuilder sb = new StringBuilder(n*str.length());
+        for (int i=0; i<Math.abs(n); i++)
+            sb.append(str);
+        return sb.toString();
+    }
 
 }
