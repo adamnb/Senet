@@ -29,16 +29,18 @@ public class GameManager {
                 roll = game.toss();
             }
 
+            // TODO: Score display
+
             // Report roll
             System.out.print("\nPlayer " + game.getTurn() + " threw a " + roll +
                     ". A piece must move " + AnsiColors.format(AnsiColors.NUMBER,game.rollSpaces() + " spaces. "));
             if (game.hasExtraTurn())
-                System.out.println(AnsiColors.ul("Additional throw gained."));
+                System.out.println("Additional throw gained.");
             else System.out.println();
 
             // Obtain player input to move piece
-            System.out.print(AnsiColors.inp("PLAYER "+game.getTurn()+" \""+game.getPlayerSymbol()[game.getTurn()-1]
-                    +"\" MOVE: "));
+            System.out.print(AnsiColors.player("PLAYER "+game.getTurn()+" \""+game.getPlayerSymbol()[game.getTurn()-1]
+                    +"\" MOVE: ", game.getTurn()));
 
             String movInp = scanner.next(); // nextInt() sucks
             int mov;
@@ -101,35 +103,34 @@ public class GameManager {
     // TODO: Okay this just fucking sucks
     public String drawBoard (boolean print) {
 
-
-        String ret = "";
+        StringBuilder ret = new StringBuilder(9*game.getBoard().length);
 
         for (int j = 0; j < game.getBoard().length; j+=10) {
             // Display board pieces
             if (j >= 10)
-                ret+="\n";
+                ret.append("\n");
 
             for (int i = j; i < j+10; i++) {
                 char resolvedSym = game.getBoard()[i] == 0 ?
                         ' ' : game.getPlayerSymbol()[ game.getBoard()[i]-1]; // Shows a space if there is no gamepiece
-                ret += " " + resolvedSym + " ";
+                ret.append(" ").append(resolvedSym).append(" ");
             }
-            ret += "\n";
+            ret.append("\n");
             // Write numbers below
             for (int i = 0; i < 10; i++) {
                 // Handle formatting for single & double digit numbers
                 String digit = "" + (j + i + 1);
                 if (j + i + 1 < 10)
                     digit = (j + i + 1) + " ";
-                ret += " " + digit;
+                ret.append(" ").append(digit);
             }
-            ret += "\n------------------------------"; // Row separator
+            ret.append("\n------------------------------"); // Row separator
         }
 
         if (print)
             System.out.println(ret);
 
-        return ret;
+        return ret.toString();
     }
     public String drawBoard () { return drawBoard(true); }
 
