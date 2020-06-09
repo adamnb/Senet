@@ -11,6 +11,8 @@ public class Senet {
     private int roll  = 1; // What the current roll amount is for the current turn
     private int moves = 0; // How many moves have been executed
 
+    private int ankh = -1;
+
     /**
      * @param player1 The symbol representing player 1
      * @param player2 The symbol representing player 2
@@ -32,6 +34,10 @@ public class Senet {
         if (rows > 10)
             rows = 10;
         board = new int[10*rows];
+
+        // Place Ankh in middle of the board if applicable
+        if (rows > 1)
+            ankh = board.length/2-1;
 
         // Keep first player within range
         if (initiative > 2)
@@ -166,8 +172,13 @@ public class Senet {
             pos = board.length-1;
 
         int team = board[pos];
-        //      vv        Check behind       vv      vv              Check in front                vv
-        return (pos > 0 && board[pos-1] == team) || (pos < board.length - 1 && board[pos + 1] == team);
+
+        if (team > 0 && pos == ankh) // Ankh protection
+            return true;
+
+        return team > 0 &&
+                ((pos > 0 && board[pos-1] == team) || // Check behind
+                (pos < board.length - 1 && board[pos + 1] == team)); // Check in front
     }
 
     /**
