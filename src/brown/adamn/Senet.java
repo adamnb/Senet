@@ -79,7 +79,6 @@ public class Senet {
             return 2; // Illegal move: Attempt to move opponent piece
 
         if (destPos == board.length) {
-            System.out.println("Score!");
             moves++;
             board[pos] = 0;
             score[turn-1]++;
@@ -207,5 +206,7 @@ public class Senet {
     public int[] getScore () { return score; }
 
     public int getRoll () { return roll; }
+
+    public int getAnkh () { return ankh; }
 
 }

@@ -116,7 +116,8 @@ public class GameManager {
 
             for (int i = j; i < j+10; i++) {
                 ret.append(" ")
-                        .append(AnsiColors.player(Character.toString(game.getPlayerSymbol(i)), game.getBoard()[i]))
+                        .append( i == game.getAnkh() && game.getBoard()[i] == 0 ? "\u2625" :// Show ankh
+                                AnsiColors.player(Character.toString(game.getPlayerSymbol(i)), game.getBoard()[i]))
                         .append(" ");
             }
             ret.append("\n");
@@ -142,7 +143,7 @@ public class GameManager {
         StringBuilder ret = new StringBuilder(112);
         int score = game.getScore()[player-1];
         ret.append(AnsiColors.player("Player "+player, player)).append(" [")
-                .append(repeatStr(AnsiColors.format(AnsiColors.BG[player-1], "+"), score))
+                .append(repeatStr(AnsiColors.player("█", player), score))
                 .append(repeatStr(" ",5-score)).append("] ").append(score).append("/5");
         return ret.toString();
     }
