@@ -12,4 +12,4 @@ The game is played on a board with three rows of ten. The number of rows can be 
 Both player gets their own set of 5 pawns that occupy a single slot. These are represented by a specific character (`@` and `#`by default). At the start of the game they occupy the first row and alternate from left to right.
 
 [1]:https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwieioWJ-unpAhWSHzQIHZQaCH0QFjAHegQICxAF&url=https%3A%2F%2Fwww.cs.brandeis.edu%2F~storer%2FJimPuzzles%2FGAMES%2FSenet%2FSenet.pdf&usg=AOvVaw3yHIpUPXjTDe_oUweiZgbE
-[2]:(http://repl.it/@adamnb/Senetnet)
+[2]:https://repl.it/@adamnb/Senetnet
