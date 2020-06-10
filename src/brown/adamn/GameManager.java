@@ -115,10 +115,13 @@ public class GameManager {
                 ret.append("\n");
 
             for (int i = j; i < j+10; i++) {
-                ret.append(" ")
-                        .append( i == game.getAnkh() && game.getBoard()[i] == 0 ? "\u2625" :// Show ankh
-                                AnsiColors.player(Character.toString(game.getPlayerSymbol(i)), game.getBoard()[i]))
-                        .append(" ");
+                int player = game.getBoard()[i];
+                ret.append(" ").append(game.isGuarded(i) ? AnsiColors.UNDERL : "")
+                        .append(
+                            i == game.getAnkh() && player == 0 ?
+                                "\u2625" : // Show ankh or show player or space
+                                AnsiColors.player(Character.toString(game.getPlayerSymbol(i)), player)
+                        ).append("\u001B[0m ");
             }
             ret.append("\n");
             // Write numbers below
