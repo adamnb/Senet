@@ -17,7 +17,7 @@ public class GameManager {
 
         boolean retry = false; // If the player attempts to preform an invalid move.
         int lastRoll = 1;
-        while (game.getScore()[0] <= 5 || game.getScore()[1] <= 5) { // Breaks on win
+        while (game.getScore()[0] < 5 && game.getScore()[1] < 5) { // Breaks on win
             drawBoard();
 
             // Throw dice sticks
@@ -45,20 +45,29 @@ public class GameManager {
 
             try {
                 mov = Integer.parseInt(movInp)-1;
+
             } catch (NumberFormatException e) {
+
                 String lc = movInp.toLowerCase();
                 if (lc.equals("exit") || lc.equals("stop")) {
+
                     System.out.println("Stopping game...");
                     return;
+
                 } else if (lc.equals("score") || lc.equals("scores")) {
+
                     System.out.println(displayScores());
+
                 } else if (lc.equals("skip") || lc.equals("pass")) {
+
                     System.out.println("Turn skipped.");
                     game.nextTurn();
                     continue;
+
                 } else {
                     System.out.println(AnsiColors.err("Try using a number"));
                 }
+
                 retry = true;
                 lastRoll = roll;
                 continue;
@@ -98,6 +107,16 @@ public class GameManager {
             }
         }
         scanner.close();
+
+        int winner;
+        if (game.getScore()[0] > game.getScore()[1])
+            winner = 1;
+        else
+            winner = 2;
+
+        System.out.println(AnsiColors.player("PLAYER " + winner + " \"" +
+                game.getPlayerSymbols()[winner-1] + "\" WINS!!!!!!!!!!!!!!", winner));
+
     }
 
     /**
